@@ -1,0 +1,10 @@
+setup.py
+app/__init__.py
+app/fonctions_test.py
+app/rpc_server.py
+bridge_lib/__init__.py
+bridge_lib/core.py
+bridge_lib.egg-info/PKG-INFO
+bridge_lib.egg-info/SOURCES.txt
+bridge_lib.egg-info/dependency_links.txt
+bridge_lib.egg-info/top_level.txt

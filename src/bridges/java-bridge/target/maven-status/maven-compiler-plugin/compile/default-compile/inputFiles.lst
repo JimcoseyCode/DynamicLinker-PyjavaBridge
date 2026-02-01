@@ -1,0 +1,13 @@
+/Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/src/bridges/java-bridge/src/main/java/fr/lirmm/bridge/Benchmark.java
+/Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/src/bridges/java-bridge/src/main/java/fr/lirmm/bridge/JavaPerformanceServer.java
+/Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/src/bridges/java-bridge/src/main/java/fr/lirmm/bridge/UniversalRunner.java
+/Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/src/bridges/java-bridge/src/main/java/fr/lirmm/bridge/core/BridgeService.java
+/Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/src/bridges/java-bridge/src/main/java/fr/lirmm/bridge/core/PythonExecutor.java
+/Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/src/bridges/java-bridge/src/main/java/fr/lirmm/bridge/generated/Func_addition.java
+/Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/src/bridges/java-bridge/src/main/java/fr/lirmm/bridge/generated/Func_dire_bonjour.java
+/Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/src/bridges/java-bridge/src/main/java/fr/lirmm/bridge/generated/Func_fibonacci_performance.java
+/Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/src/bridges/java-bridge/src/main/java/fr/lirmm/bridge/generated/Func_test_primitifs.java
+/Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/src/bridges/java-bridge/src/main/java/fr/lirmm/bridge/generated/ProfilChercheur.java
+/Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/src/bridges/java-bridge/src/main/java/fr/lirmm/bridge/generated/Robot.java
+/Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/src/bridges/java-bridge/src/main/java/fr/lirmm/bridge/impl/jep/JepPythonExecutor.java
+/Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/src/bridges/java-bridge/src/main/java/fr/lirmm/bridge/impl/rpc/RpcPythonExecutor.java
