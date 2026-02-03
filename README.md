@@ -1,103 +1,64 @@
-# Pont Java-Python (L3 2026)
+# Pont Java <-> Python (gRPC High Performance)
 
-> **🚀 Aide-mémoire : Commandes Rapides**
-> 
-> *   **Générer le pont** : `python3 tools/generate_bridge.py`
-> *   **Lancer la démo** : `cd src/bridges/java-bridge && mvn compile exec:java -Dexec.mainClass="fr.lirmm.bridge.DemoPrimitives" -q`
+Ce projet fournit une solution clé en main pour exécuter du code Python depuis une application Java avec une latence extrêmement faible (~0.2ms) et une grande simplicité d'utilisation.
 
-Ce projet permet d'appeler des fonctions **Python** nativement depuis une application **Java**.
+## 🚀 Fonctionnalités Clés
 
-## 🚀 Fonctionnalités
-*   **Simplicité** : Décorez vos fonctions Python avec `@user_func`, elles deviennent appelables en Java.
-*   **Transparence** : Les types primitifs (`int`, `String`, `boolean`, `float`) sont convertis automatiquement.
-*   **Configuration Facile** : Un simple fichier `bridge.config` à la racine pointe vers votre script.
-*   **Robuste** : L'exécution Python se fait dans un processus séparé (isolation des crashs).
-
----
-
-## 🛠 Pré-requis
-*   Java 17+
-*   Maven 3+
-*   Python 3.9+
-
----
-
-## ⚡️ Guide de Démarrage Rapide
-
-### 1. Codez en Python
-Créez un fichier (ex: `mes_fonctions.py`) à la racine et utilisez le décorateur :
-
-```python
-from app.decorators import user_func
-
-@user_func
-def addition(args):
-    """ Fait une somme """
-    return args[0] + args[1]
-
-@user_func
-def inverser(args):
-    """ Inverse un texte """
-    return args[0][::-1]
-```
-
-### 2. Configurez
-Créez ou modifiez le fichier `bridge.config` à la racine du projet :
-
-```ini
-script = mes_fonctions.py
-```
-
-### 3. Générez le Pont
-Lancez l'outil qui va créer les classes Java correspondantes :
-
-```bash
-python3 tools/generate_bridge.py
-```
-*Cela va créer `Func_addition.java` et `Func_inverser.java`.*
-
-### 4. Appelez depuis Java
-Utilisez les classes générées comme des fonctions statiques :
-
-```java
-// Initialisation (une seule fois)
-BridgeService service = new BridgeService("GRPC", "../python-env");
-Func_addition.setBridge(service);
-
-// Appel
-Object resultat = Func_addition.run(10, 20);
-System.out.println("Résultat : " + resultat); // Affiche 30
-```
-
----
-
-## 🧪 Lancer la Démonstration (Types Primitifs)
-
-Une démo est fournie pour tester les entiers, chaînes et booléens.
-
-1.  Assurez-vous que `bridge.config` contient `script = primitives.py`.
-2.  Générez le pont :
-    ```bash
-    python3 tools/generate_bridge.py
-    ```
-3.  Lancez la démo Java :
-    ```bash
-    cd src/bridges/java-bridge
-    mvn compile exec:java -Dexec.mainClass="fr.lirmm.bridge.DemoPrimitives" -q
-    ```
-
----
+1.  **Découverte Automatique** : Placez vos scripts Python n'importe où dans le projet, ils sont automatiquement détectés.
+2.  **Zéro Config** : Ajoutez simplement le décorateur `@user_func` pour exposer une fonction.
+3.  **Appel Java Simplifié** : Une classe `PythonBridge` gère toute la complexité.
+4.  **Architecture Modulaire** : Le cœur du système est isolé dans `src/prototype/`.
 
 ## 📂 Structure du Projet
 
-*   `src/bridges/python-env/` : L'environnement Python (Serveur gRPC).
-*   `src/bridges/java-bridge/` : La librairie Java et vos applications.
-*   `tools/generate_bridge.py` : Le générateur de code.
-*   `bridge.config` : Fichier de configuration du script utilisateur.
+```text
+.
+├── main.py                     <-- Vos fonctions Python (exemple)
+├── start_server.sh             <-- Script de lancement du serveur
+├── run_client_demo.sh          <-- Script de démo Java
+├── java/                       <-- Client Java
+├── proto/                      <-- Définitions gRPC
+└── src/
+    └── prototype/
+        └── grpc_implementation/
+            ├── server.py       <-- Serveur gRPC
+            ├── loader.py       <-- Scanner de fonctions
+            ├── decorators.py   <-- Décorateur @user_func
+            └── generated/      <-- Code gRPC généré
+```
 
-## 🔧 Dépannage
-Si Java ne trouve pas la fonction :
-1.  Vérifiez que votre fonction a bien `@user_func`.
-2.  Vérifiez que `bridge.config` pointe vers le bon fichier.
-3.  Relancez `python3 tools/generate_bridge.py`.
-4.  Assurez-vous d'avoir fait `mvn compile` côté Java.
+## ⚡️ Démarrage Rapide
+
+### 1. Lancer le Serveur Python
+
+```bash
+./start_server.sh
+```
+*Le serveur s'initialise, installe les dépendances dans un environnement virtuel, et scanne le projet à la recherche de fonctions décorées.*
+
+### 2. Lancer la Démo Java
+
+Dans un autre terminal :
+```bash
+./run_client_demo.sh
+```
+
+## 🛠 Ajouter vos propres fonctions
+
+Créez un fichier `.py` **n'importe où** (ex: `mes_algos.py` à la racine).
+
+```python
+from decorators import user_func
+
+@user_func
+def mon_algo_complexe(data):
+    return {"status": "ok", "processed": len(data)}
+```
+
+Appelez-le depuis Java :
+
+```java
+try (PythonBridge bridge = new PythonBridge()) {
+    Map resultat = bridge.execute("mon_algo_complexe", Map.class, "mes données");
+}
+```
