@@ -7,7 +7,7 @@ import grpc
 
 # Configuration des chemins pour les imports
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, "../../../.."))
+PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, "../../../../../../../../../"))
 GENERATED_DIR = os.path.join(CURRENT_DIR, "generated")
 
 # Ajout des chemins au système pour que Python trouve les modules

@@ -1,15 +1,17 @@
 #!/bin/bash
+# Script pour lancer le serveur gRPC Python
+# Situé dans java/src/main/java/fr/lirmm/bridge/impl/grpc/
 
-# Script pour lancer le serveur gRPC Python Bridge
-
-ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-SERVER_DIR="$ROOT_DIR/src/prototype/grpc_implementation"
+SERVER_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# Remonte à la racine du projet (9 niveaux)
+ROOT_DIR="$SERVER_DIR/../../../../../../../../.."
+# Chemin vers le fichier proto (sous-dossier local)
+PROTO_DIR="$SERVER_DIR/proto"
 
 cd "$SERVER_DIR"
 
 echo "<--- Démarrage du serveur gRPC --->"
 
-# 1. Vérification de l'environnement virtuel
 if [ ! -d "venv" ]; then
     echo "Environnement virtuel non trouvé. Installation..."
     python3 -m venv venv
@@ -21,9 +23,10 @@ fi
 
 echo "Vérification/Génération du code gRPC..."
 python -m grpc_tools.protoc \
-    -I"$ROOT_DIR/proto" \
+    -I"$PROTO_DIR" \
     --python_out=generated \
     --grpc_python_out=generated \
-    "$ROOT_DIR/proto/bridge.proto"
+    "$PROTO_DIR/bridge.proto"
+
 lsof -ti:50051 | xargs kill -9 2>/dev/null || true
 python -u server.py
