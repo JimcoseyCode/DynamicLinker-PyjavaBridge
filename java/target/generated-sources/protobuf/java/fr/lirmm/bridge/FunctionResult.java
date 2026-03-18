@@ -44,6 +44,10 @@ private static final long serialVersionUID = 0L;
   public static final int SUCCESS_FIELD_NUMBER = 1;
   private boolean success_ = false;
   /**
+   * <pre>
+   * True si l'exécution a réussi
+   * </pre>
+   *
    * <code>bool success = 1;</code>
    * @return The success.
    */
@@ -56,6 +60,10 @@ private static final long serialVersionUID = 0L;
   @SuppressWarnings("serial")
   private volatile java.lang.Object resultJson_ = "";
   /**
+   * <pre>
+   * Résultat en JSON
+   * </pre>
+   *
    * <code>string result_json = 2;</code>
    * @return The resultJson.
    */
@@ -73,6 +81,10 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
+   * <pre>
+   * Résultat en JSON
+   * </pre>
+   *
    * <code>string result_json = 2;</code>
    * @return The bytes for resultJson.
    */
@@ -95,6 +107,10 @@ private static final long serialVersionUID = 0L;
   @SuppressWarnings("serial")
   private volatile java.lang.Object errorMessage_ = "";
   /**
+   * <pre>
+   * Message d'erreur en cas d'échec
+   * </pre>
+   *
    * <code>string error_message = 3;</code>
    * @return The errorMessage.
    */
@@ -112,6 +128,10 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
+   * <pre>
+   * Message d'erreur en cas d'échec
+   * </pre>
+   *
    * <code>string error_message = 3;</code>
    * @return The bytes for errorMessage.
    */
@@ -506,6 +526,10 @@ private static final long serialVersionUID = 0L;
 
     private boolean success_ ;
     /**
+     * <pre>
+     * True si l'exécution a réussi
+     * </pre>
+     *
      * <code>bool success = 1;</code>
      * @return The success.
      */
@@ -514,6 +538,10 @@ private static final long serialVersionUID = 0L;
       return success_;
     }
     /**
+     * <pre>
+     * True si l'exécution a réussi
+     * </pre>
+     *
      * <code>bool success = 1;</code>
      * @param value The success to set.
      * @return This builder for chaining.
@@ -526,6 +554,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * True si l'exécution a réussi
+     * </pre>
+     *
      * <code>bool success = 1;</code>
      * @return This builder for chaining.
      */
@@ -538,6 +570,10 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object resultJson_ = "";
     /**
+     * <pre>
+     * Résultat en JSON
+     * </pre>
+     *
      * <code>string result_json = 2;</code>
      * @return The resultJson.
      */
@@ -554,6 +590,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * Résultat en JSON
+     * </pre>
+     *
      * <code>string result_json = 2;</code>
      * @return The bytes for resultJson.
      */
@@ -571,6 +611,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * Résultat en JSON
+     * </pre>
+     *
      * <code>string result_json = 2;</code>
      * @param value The resultJson to set.
      * @return This builder for chaining.
@@ -584,6 +628,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Résultat en JSON
+     * </pre>
+     *
      * <code>string result_json = 2;</code>
      * @return This builder for chaining.
      */
@@ -594,6 +642,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Résultat en JSON
+     * </pre>
+     *
      * <code>string result_json = 2;</code>
      * @param value The bytes for resultJson to set.
      * @return This builder for chaining.
@@ -610,6 +662,10 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object errorMessage_ = "";
     /**
+     * <pre>
+     * Message d'erreur en cas d'échec
+     * </pre>
+     *
      * <code>string error_message = 3;</code>
      * @return The errorMessage.
      */
@@ -626,6 +682,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * Message d'erreur en cas d'échec
+     * </pre>
+     *
      * <code>string error_message = 3;</code>
      * @return The bytes for errorMessage.
      */
@@ -643,6 +703,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * Message d'erreur en cas d'échec
+     * </pre>
+     *
      * <code>string error_message = 3;</code>
      * @param value The errorMessage to set.
      * @return This builder for chaining.
@@ -656,6 +720,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Message d'erreur en cas d'échec
+     * </pre>
+     *
      * <code>string error_message = 3;</code>
      * @return This builder for chaining.
      */
@@ -666,6 +734,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Message d'erreur en cas d'échec
+     * </pre>
+     *
      * <code>string error_message = 3;</code>
      * @param value The bytes for errorMessage to set.
      * @return This builder for chaining.

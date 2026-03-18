@@ -5,7 +5,7 @@ import warnings
 
 import bridge_pb2 as bridge__pb2
 
-GRPC_GENERATED_VERSION = '1.76.0'
+GRPC_GENERATED_VERSION = '1.78.0'
 GRPC_VERSION = grpc.__version__
 _version_not_supported = False
 
@@ -45,7 +45,7 @@ class BridgeServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def Execute(self, request, context):
-        """Execute a specific function by name with JSON arguments
+        """Exécution standard d'une fonction Python via JSON
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')

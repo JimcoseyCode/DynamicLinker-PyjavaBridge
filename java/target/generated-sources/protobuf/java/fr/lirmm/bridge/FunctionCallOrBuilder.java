@@ -21,11 +21,19 @@ public interface FunctionCallOrBuilder extends
       getFunctionNameBytes();
 
   /**
+   * <pre>
+   * Arguments sérialisés en JSON
+   * </pre>
+   *
    * <code>string args_json = 2;</code>
    * @return The argsJson.
    */
   java.lang.String getArgsJson();
   /**
+   * <pre>
+   * Arguments sérialisés en JSON
+   * </pre>
+   *
    * <code>string args_json = 2;</code>
    * @return The bytes for argsJson.
    */

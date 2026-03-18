@@ -84,6 +84,10 @@ private static final long serialVersionUID = 0L;
   @SuppressWarnings("serial")
   private volatile java.lang.Object argsJson_ = "";
   /**
+   * <pre>
+   * Arguments sérialisés en JSON
+   * </pre>
+   *
    * <code>string args_json = 2;</code>
    * @return The argsJson.
    */
@@ -101,6 +105,10 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
+   * <pre>
+   * Arguments sérialisés en JSON
+   * </pre>
+   *
    * <code>string args_json = 2;</code>
    * @return The bytes for argsJson.
    */
@@ -543,6 +551,10 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object argsJson_ = "";
     /**
+     * <pre>
+     * Arguments sérialisés en JSON
+     * </pre>
+     *
      * <code>string args_json = 2;</code>
      * @return The argsJson.
      */
@@ -559,6 +571,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * Arguments sérialisés en JSON
+     * </pre>
+     *
      * <code>string args_json = 2;</code>
      * @return The bytes for argsJson.
      */
@@ -576,6 +592,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * Arguments sérialisés en JSON
+     * </pre>
+     *
      * <code>string args_json = 2;</code>
      * @param value The argsJson to set.
      * @return This builder for chaining.
@@ -589,6 +609,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Arguments sérialisés en JSON
+     * </pre>
+     *
      * <code>string args_json = 2;</code>
      * @return This builder for chaining.
      */
@@ -599,6 +623,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Arguments sérialisés en JSON
+     * </pre>
+     *
      * <code>string args_json = 2;</code>
      * @param value The bytes for argsJson to set.
      * @return This builder for chaining.

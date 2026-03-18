@@ -1,60 +1,47 @@
 package fr.lirmm.bridge;
 
-import java.util.List;
-import java.util.Map;
+import fr.lirmm.bridge.core.PythonBridge;
+import fr.lirmm.bridge.core.PythonConnectorFactory;
+import fr.lirmm.bridge.core.PythonFunctions;
 
+/**
+ * Client de démonstration du flux de travail "Zéro Compilation".
+ */
 public class Client {
     public static void main(String[] args) {
-        String prototypeArg = "rep";
-        String fileArg = "../custom_test.py"; // Par défaut
+        // Fichier principal par défaut
+        String fichierPython = "./user_func.py";
 
-        for (int i = 0; i < args.length; i++) {
-            if ("--prototype".equals(args[i]) && i + 1 < args.length) {
-                prototypeArg = args[i + 1];
-            } else if ("--file".equals(args[i]) && i + 1 < args.length) {
-                fileArg = args[i + 1];
-            }
-        }
+        System.out.println("=== BRIDGE JAVA <-> PYTHON (Zéro Compilation) ===");
 
-        PythonConnectorFactory.Prototype prototype = PythonConnectorFactory.fromString(prototypeArg);
-        System.out.println("Démarrage avec le prototype : " + prototype);
-        System.out.println("Fichier cible : " + fileArg);
+        try (PythonBridge bridge = PythonConnectorFactory.createBridge(
+                PythonConnectorFactory.Prototype.GRPC,
+                fichierPython)) {
+            // --- OPTION 1 : L'appel via Proxy (Propre, mais nécessite compilation) ---
+            System.out.println("\n[Proxy] Appel via interface PythonFunctions.java :");
+            PythonFunctions api = bridge.getApi(PythonFunctions.class);
+            System.out.println(" Fibonacci(5) = " + api.fibonacci(5));
 
-        try (IPythonConnector bridge = PythonConnectorFactory.createConnector(prototype)) {
-            bridge.connect(fileArg);
+            // --- OPTION 2 : L'appel DYNAMIQUE (Ultra-rapide, aucune compilation
+            // nécessaire) ---
+            // On peut appeler N'IMPORTE QUELLE fonction Python par son nom,
+            // même si elle n'est pas dans PythonFunctions.java !
 
-            System.out.println("--- Test des appels de fonction python depuis java ---");
+            System.out.println("\n[Dynamique] Appel d'une fonction sans interface (bridge.call) :");
 
-            try {
-                String hello = bridge.execute("sayHello", String.class, "Raphael");
-                System.out.println("func (sayHello) : " + hello);
-            } catch (Exception e) {
-                System.out.println("sayHello non disponible ou erreur : " + e.getMessage());
-            }
+            // Essayons d'appeler 'multiply' (déjà là) mais sans interface
+            Object res1 = bridge.call("multiply", 10, 5);
+            System.out.println("   Appel 'multiply' (10*5) = " + res1);
 
-            try {
-                Map user = bridge.execute("get_user_info", Map.class, 18);
-                System.out.println("get_user_info(18): " + user);
-            } catch (Exception e) {
-                System.out.println("get_user_info non disponible ou erreur : " + e.getMessage());
-            }
+            // Appel avec typage automatique du retour
+            String resHello = bridge.execute("sayHello", String.class, "Étudiant");
+            System.out.println("   Appel 'sayHello' = " + resHello);
 
-            try {
-                List fibo = bridge.execute("fibonacci", List.class, 10);
-                System.out.println("fibonacci(10): " + fibo);
-            } catch (Exception e) {
-                System.out.println("fibonacci non disponible ou erreur : " + e.getMessage());
-            }
-
-            try {
-                Integer p = bridge.execute("puissance", Integer.class, 2, 2);
-                System.out.println("puissance(2,2): " + p);
-            } catch (Exception e) {
-                System.out.println("puissance non disponible ou erreur : " + e.getMessage());
-            }
+            System.out.println("\nCONSEIL : Si vous ajoutez une nouvelle fonction en Python, ");
+            System.out.println("utilisez 'bridge.call(\"ma_fonction\", args)' pour la tester tout de suite !");
 
         } catch (Exception e) {
-            System.err.println("Erreur fatale : " + e.getMessage());
+            System.err.println("Erreur : " + e.getMessage());
             e.printStackTrace();
         }
     }

@@ -96,7 +96,7 @@ public final class BridgeServiceGrpc {
 
     /**
      * <pre>
-     * Execute a specific function by name with JSON arguments
+     * Exécution standard d'une fonction Python via JSON
      * </pre>
      */
     default void execute(fr.lirmm.bridge.FunctionCall request,
@@ -134,7 +134,7 @@ public final class BridgeServiceGrpc {
 
     /**
      * <pre>
-     * Execute a specific function by name with JSON arguments
+     * Exécution standard d'une fonction Python via JSON
      * </pre>
      */
     public void execute(fr.lirmm.bridge.FunctionCall request,
@@ -162,7 +162,7 @@ public final class BridgeServiceGrpc {
 
     /**
      * <pre>
-     * Execute a specific function by name with JSON arguments
+     * Exécution standard d'une fonction Python via JSON
      * </pre>
      */
     public fr.lirmm.bridge.FunctionResult execute(fr.lirmm.bridge.FunctionCall request) {
@@ -189,7 +189,7 @@ public final class BridgeServiceGrpc {
 
     /**
      * <pre>
-     * Execute a specific function by name with JSON arguments
+     * Exécution standard d'une fonction Python via JSON
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<fr.lirmm.bridge.FunctionResult> execute(

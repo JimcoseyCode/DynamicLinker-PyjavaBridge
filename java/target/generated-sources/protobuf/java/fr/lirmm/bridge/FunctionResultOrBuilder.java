@@ -9,17 +9,29 @@ public interface FunctionResultOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
+   * <pre>
+   * True si l'exécution a réussi
+   * </pre>
+   *
    * <code>bool success = 1;</code>
    * @return The success.
    */
   boolean getSuccess();
 
   /**
+   * <pre>
+   * Résultat en JSON
+   * </pre>
+   *
    * <code>string result_json = 2;</code>
    * @return The resultJson.
    */
   java.lang.String getResultJson();
   /**
+   * <pre>
+   * Résultat en JSON
+   * </pre>
+   *
    * <code>string result_json = 2;</code>
    * @return The bytes for resultJson.
    */
@@ -27,11 +39,19 @@ public interface FunctionResultOrBuilder extends
       getResultJsonBytes();
 
   /**
+   * <pre>
+   * Message d'erreur en cas d'échec
+   * </pre>
+   *
    * <code>string error_message = 3;</code>
    * @return The errorMessage.
    */
   java.lang.String getErrorMessage();
   /**
+   * <pre>
+   * Message d'erreur en cas d'échec
+   * </pre>
+   *
    * <code>string error_message = 3;</code>
    * @return The bytes for errorMessage.
    */
