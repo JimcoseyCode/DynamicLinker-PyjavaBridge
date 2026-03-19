@@ -1,8 +1,11 @@
 import ast
 import os
 import sys
-
+# * [pseudo - COMPILATEUR] -> genere automatiquement une classe java qui sera utilisée en tant qu'interface contenant les methodes
+# *                  scnaner dans le dossier directory de tout les fonctions user trouvée et serons disponible directement en java a travers le systeme 
+# *                  de proxy pour de la pure transparence entre les focntions python et java 
 # Table de correspondance des types Python -> Java
+# ! [info] -> ici on a notre table de de traduction des types primitif de python a java 
 TYPE_MAP = {
     'int': 'Integer',
     'str': 'String',
@@ -52,12 +55,16 @@ def extract_info_from_py(filepath):
     return functions
 
 def generate():
-    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    output_file = os.path.join(project_root, "java/src/main/java/fr/lirmm/bridge/core/PythonFunctions.java")
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    print(project_root)
+    output_dir = os.path.join(project_root, "java/src/main/java/fr/lirmm/bridge/user_api")
+    os.makedirs(output_dir, exist_ok=True)
+    output_file = os.path.join(output_dir, "PythonFunctions.java")
+    user_src_dir = os.path.join(project_root, "python_src_dir")
     
     all_funcs = []
-    for root, _, files in os.walk(project_root):
-        if any(x in root for x in ["venv", "target", ".git", "java"]): continue
+    # On ne scanne QUE le dossier python_src_dir
+    for root, _, files in os.walk(user_src_dir):
         for f in files:
             if f.endswith(".py"):
                 all_funcs.extend(extract_info_from_py(os.path.join(root, f)))
@@ -67,11 +74,12 @@ def generate():
     for f in sorted(all_funcs, key=lambda x: x['name']):
         methods.append(f"    {f['ret']} {f['name']}({f['args']});")
 
-    content = f"""package fr.lirmm.bridge.core;
+    content = f"""package fr.lirmm.bridge.user_api;
 
 /**
- * Interface GENEREE AUTOMATIQUEMENT par tools/generate_interface.py
- * Basée sur les décorateurs @user_func et les Type Hints Python.
+ * Interface Generée automatique /scrips/generate_interface.py
+ * Basée sur les décorateurs @user_func et les Type Hints Python ou sans typagee en python mais qui seront du type object en java qui
+    qui est un type heritée par toute les .
  */
 public interface PythonFunctions {{
 {chr(10).join(methods)}
@@ -79,7 +87,7 @@ public interface PythonFunctions {{
 """
     with open(output_file, "w", encoding="utf-8") as f:
         f.write(content)
-    print(f"✅ Interface Java mise à jour avec {len(methods)} fonctions typées.")
+    print(f"Interface Java mise à jour avec {len(methods)} ")
 
 if __name__ == "__main__":
     generate()

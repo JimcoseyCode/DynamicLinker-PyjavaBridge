@@ -12,7 +12,8 @@ public interface IPythonConnector extends AutoCloseable {
     void connect(String pythonFile) throws Exception;
 
     /**
-     * Exécute une fonction Python
+     * Exécute une fonction Python de maniere direct et classique avec parametrage
+     * simplifiée
      */
     <T> T execute(String functionName, Class<T> returnType, Object... args);
 

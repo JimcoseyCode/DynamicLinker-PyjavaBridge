@@ -4,9 +4,9 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.gson.Gson;
 
+import fr.lirmm.bridge.BridgeServiceGrpc;
+import fr.lirmm.bridge.FunctionCall;
 import fr.lirmm.bridge.FunctionResult;
-import fr.lirmm.bridge.core.BridgeServiceGrpc;
-import fr.lirmm.bridge.core.FunctionCall;
 import fr.lirmm.bridge.core.IPythonConnector;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;

@@ -1,14 +1,13 @@
 /Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/java/src/main/java/fr/lirmm/bridge/Client.java
-/Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/java/src/main/java/fr/lirmm/bridge/TestTout.java
 /Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/java/src/main/java/fr/lirmm/bridge/core/IPythonConnector.java
 /Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/java/src/main/java/fr/lirmm/bridge/core/PythonBridge.java
 /Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/java/src/main/java/fr/lirmm/bridge/core/PythonConnectorFactory.java
-/Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/java/src/main/java/fr/lirmm/bridge/core/PythonFunctions.java
 /Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/java/src/main/java/fr/lirmm/bridge/core/PythonProxy.java
 /Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/java/src/main/java/fr/lirmm/bridge/core/impl/graalvm/GraalVMConnector.java
 /Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/java/src/main/java/fr/lirmm/bridge/core/impl/grpc/GRPCBridge.java
 /Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/java/src/main/java/fr/lirmm/bridge/core/impl/grpc/GRPCConnector.java
 /Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/java/src/main/java/fr/lirmm/bridge/core/impl/rep/RepConnector.java
+/Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/java/src/main/java/fr/lirmm/bridge/user_api/PythonFunctions.java
 /Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/java/target/generated-sources/protobuf/grpc-java/fr/lirmm/bridge/BridgeServiceGrpc.java
 /Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/java/target/generated-sources/protobuf/java/fr/lirmm/bridge/BridgeProto.java
 /Users/raphael_raphix/Documents/L3-INFO/l3-2026-fonctions-externes-python/java/target/generated-sources/protobuf/java/fr/lirmm/bridge/FunctionCall.java

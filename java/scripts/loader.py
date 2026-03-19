@@ -1,20 +1,21 @@
 import os
 import importlib.util
 import sys
-
+# ! 
 def load_modules_from_directory(directory):
     """
     Parcourt le répertoire donné et importe tous les fichiers .py pour enregistrer les @user_func.
     """
-    print(f"--- Découverte automatique des fonctions dans : {directory} ---")
+    # 
+    path_directory_target = directory.split('/')[-1];
+    print(f"** Recherche de fonctions utilisateur dans le working_dir : {path_directory_target} ** ")
+    # On s'assure que la racine est dans le path pour les imports relatifs
+    project_root = os.path.dirname(directory) # Car directory est 'python_src_dir'
     
-    # On s'assure que la racine et tools sont dans le path pour les imports relatifs
     if directory not in sys.path:
         sys.path.insert(0, directory)
-    
-    tools_path = os.path.join(directory, "tools")
-    if os.path.exists(tools_path) and tools_path not in sys.path:
-        sys.path.insert(0, tools_path)
+    if project_root not in sys.path:
+        sys.path.insert(0, project_root)
 
     count = 0
     # Dossiers à ignorer absolument
@@ -46,4 +47,4 @@ def load_modules_from_directory(directory):
                 except Exception as e:
                     print(f"  [-] Erreur lors du chargement de {module_name} ({filename}): {e}")
     
-    print(f"--- Fin du scan : {count} fichiers chargés ---\n")
+    print(f"  Fin du scan : {count} fichiers chargés depuis {path_directory_target}\n")

@@ -3,8 +3,8 @@ package fr.lirmm.bridge.core;
 import fr.lirmm.bridge.core.impl.grpc.GRPCBridge;
 
 /**
- ** Utilitaire pour generer un pont specifique a une implemntation d'un prototype
- * *choisi
+ ** Utilitaire pour chosir un pont specifique a une implemntation d'un prototype
+ * donne
  ** Nous permet d'avoir la meme base modulaire pour ce connecter au technologie
  ** disponible
  */
@@ -30,7 +30,7 @@ public class PythonConnectorFactory {
                 return null;
 
             default:
-                throw new IllegalArgumentException("Ce mode n'est pas supporté : " + type);
+                throw new IllegalArgumentException("Ce prototype n'est pas supporté : " + type);
         }
     }
 

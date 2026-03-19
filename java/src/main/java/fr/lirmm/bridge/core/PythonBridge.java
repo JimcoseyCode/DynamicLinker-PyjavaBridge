@@ -16,7 +16,9 @@ public class PythonBridge implements AutoCloseable {
      * Crée un objet qui implémente l'interface donnée et appelle Python.
      * C'est la méthode la plus simple pour l'utilisateur.
      */
-    public <T> T getApi(Class<T> interfaceClass) {
+    // interface class c'est une liste de methode disponible sans implemntation
+    // juste pour avoir de la transparence java python
+    public <T> T proxyCall(Class<T> interfaceClass) {
         return PythonProxy.create(interfaceClass, connector);
     }
 

@@ -1,115 +1,99 @@
-# Pont Java <-> Python (Architecture gRPC)
+# Stage L3 - Pont Java-Python (fonctions-externes-python)
 
-Ce projet fournit une solution clé en main pour exécuter du code Python depuis une application Java (comme la plateforme Integraal) avec une grande simplicité d'utilisation et une faible latence. 
+Ce système implémente plusieurs solutions pour faire appel à des fonctions Python depuis Java de manière transparente à travers différentes technologies : **gRPC**, **GraalVM**, et **Rep**.
 
-Le système repose sur un mécanisme de **découverte automatique** : il suffit de décorer une fonction Python pour qu'elle devienne appelable instantanément et de façon transparente depuis Java.
+L'architecture utilise un système de **Proxy dynamique** en Java, permettant d'appeler des fonctions Python comme s'il s'agissait de méthodes Java natives, avec une génération automatique d'interface.
 
-## ✨ Fonctionnalités Clés
 
-1.  **Découverte Automatique** : Placez vos scripts Python n'importe où dans le projet, le système scanne l'espace de travail au démarrage et trouve vos fonctions.
-2.  **Zéro Configuration (Python)** : Importez et ajoutez simplement le décorateur `@user_func` sur les fonctions que vous souhaitez exposer.
-3.  **Appels Java Transparents (Proxy)** : Appelez vos fonctions Python via une simple interface Java, comme s'il s'agissait de méthodes Java natives.
-4.  **Gestion Automatique du Serveur** : Le cycle de vie du serveur Python (gRPC) est géré automatiquement par le client Java au démarrage.
+## Installation et Configuration
+### 1. Préparation de l'environnement Python
+Le projet utilise un environnement virtuel (`venv`) pour isoler les dépendances gRPC.
 
-## 📂 Structure du Projet
-
-```text
-.
-├── java/
-│   ├── Client.java               <-- Démonstration de l'appel Java
-│   ├── pom.xml                   <-- Configuration Maven
-│   ├── start_grpc_server.py      <-- Lanceur manuel du serveur
-│   └── src/main/java/fr/lirmm/bridge/
-│       └── core/
-│           ├── PythonBridge.java            <-- Point d'entrée principal (Java)
-│           ├── PythonProxy.java             <-- Générateur de Proxy dynamique
-│           ├── PythonFunctions.java         <-- Interface listant les fonctions Python
-│           └── impl/grpc/python/
-│               ├── server.py                <-- Serveur gRPC (exécute le code Python)
-│               └── loader.py                <-- Scanner de découverte automatique
-├── tools/
-│   ├── decorators.py             <-- Contient le décorateur @user_func
-│   └── generate_interface.py     <-- (Optionnel) Générateur d'interface Java
-└── user_func.py                  <-- (Exemple) Vos fonctions Python
+```bash
+# À la racine du projet
+python3 -m venv venv
+source venv/bin/activate  # Sur Windows: venv\Scripts\activate
+pip install -r java/src/main/java/fr/lirmm/bridge/core/impl/grpc/python/requirements.txt
 ```
 
-## 🚀 Démarrage Rapide
+### 2. Compilation du projet Java
+La compilation Maven gère automatiquement :
+1. La génération du code Java à partir du fichier `.proto`.
+2. Le scan des fichiers Python dans `python_src_dir/` pour générer l'interface `PythonFunctions.java`.
 
-### 1. Prérequis
-- **Python 3.9+** (le système créera son propre environnement virtuel pour gRPC).
-- **Java 11+** et **Maven** (pour compiler le client).
-
-### 2. Compiler le projet Java
-Placez-vous dans le dossier `java` et compilez le projet avec Maven :
 ```bash
-cd java
+cd java/
 mvn clean compile
 ```
 
-### 3. Exécuter la démonstration
-Vous pouvez exécuter le client Java de démonstration, qui va démarrer automatiquement le serveur Python en arrière-plan et appeler les fonctions de `user_func.py`.
+---
+
+## [] -> Guide d'Utilisation (gRPC)
+
+### 1. Écrire le code Python
+Placez vos fichiers dans le dossier **`python_src_dir`**. Utilisez le décorateur `@user_func` et les *Type Hints* pour une meilleure intégration :
+
+```python
+# Fichier: python_src_dir/mes_calculs.py
+from bridge_api.decorators import user_func
+
+@user_func
+def multiplier(a: int, b: int) -> int:
+    """Multiplie deux nombres depuis Python."""
+    return a * b
+```
+
+### 2. Lancer le serveur gRPC 
+Le serveur doit être actif pour que Java puisse communiquer avec Python ou sinon le client java a travers le connecteur si cela n'est pas fais il le fera a votre place 
+
 ```bash
+# À la racine du projet
+python3 start_persistent_server_grpc.py
+```
+*Le serveur re-génère automatiquement l'interface Java à chaque démarrage si de nouvelles fonctions sont détectées.*
+
+### 3. Utilisation depuis Java
+Le `PythonConnectorFactory` permet de créer un pont vers Python. L'utilisation du Proxy rend l'appel totalement transparent et simple pour l utilisateur final.
+
+```java
+import fr.lirmm.bridge.core.PythonBridge;
+import fr.lirmm.bridge.core.PythonConnectorFactory;
+import fr.lirmm.bridge.user_api.PythonFunctions;
+
+public class Main {
+    public static void main(String[] args) {
+        // Création du pont avec [typePrototype]
+        try (PythonBridge bridge = PythonConnectorFactory.createBridge(PythonConnectorFactory.Prototype.GRPC, null)) {
+            
+            // Récupération de l interface proxy 
+            PythonFunctions user_func = bridge.proxyCall(PythonFunctions.class);
+            
+            // Appel transparent de la fonction Python
+            int res = api.multiplier(10, 5);
+            System.out.println("Résultat de multiplier(10, 5) : " + res);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+---
+
+## Architecture du Projet
+
+- `bridge_api/` : Contient le décorateur `@user_func` utilisé côté Python.
+- `python_src_dir/` : Répertoire où l'utilisateur dépose ses scripts Python.
+- `java/src/main/java/fr/lirmm/bridge/core/` : Cœur du système (Factory, Connecteurs gRPC/GraalVM).
+- `java/scripts/generate_interface.py` : Script de "compilation" qui traduit les signatures Python en interface Java.
+- `start_persistent_server_grpc.py` : Script de lancement rapide du serveur gRPC.
+
+## Tests
+Pour lancer le client de test :
+```bash
+cd java/
 mvn exec:java -Dexec.mainClass="fr.lirmm.bridge.Client"
 ```
 
-## 🛠 Guide d'Utilisation : Exposer vos propres fonctions
 
-### Étape 1 : Créer la fonction en Python
-
-Créez un fichier `.py` **n'importe où** dans le projet (par exemple à la racine) et utilisez le décorateur `@user_func` :
-
-```python
-# Fichier: mes_calculs.py
-from tools.decorators import user_func
-
-@user_func
-def ma_super_fonction(a, b):
-    return f"Le résultat est : {a + b}"
-```
-
-### Étape 2 : L'appeler depuis Java
-
-Vous avez deux façons d'appeler cette nouvelle fonction en Java via la classe `PythonBridge`.
-
-#### Option A : L'appel via Proxy Transparent (Recommandé)
-
-Ajoutez la signature de votre fonction dans l'interface `PythonFunctions.java` :
-```java
-// Dans: fr.lirmm.bridge.core.PythonFunctions.java
-public interface PythonFunctions {
-    // ... autres fonctions ...
-    String ma_super_fonction(int a, int b);
-}
-```
-
-Puis appelez-la simplement :
-```java
-try (PythonBridge bridge = new PythonBridge()) {
-    PythonFunctions api = bridge.getApi(PythonFunctions.class);
-    
-    // Appel magique vers Python !
-    String resultat = api.ma_super_fonction(10, 20);
-    System.out.println(resultat);
-} catch (Exception e) {
-    e.printStackTrace();
-}
-```
-
-#### Option B : L'appel Direct (Sans Interface)
-Idéal pour tester très rapidement sans modifier l'interface Java :
-
-```java
-try (PythonBridge bridge = new PythonBridge()) {
-    String resultat = bridge.execute("ma_super_fonction", String.class, 10, 20);
-    System.out.println(resultat);
-}
-```
-
-## ⚙️ Architecture Sous-Jacente
-
-Le cœur du système utilise **gRPC**, un framework RPC haute performance développé par Google.
-- Lorsque le `PythonBridge` s'instancie en Java, il exécute un script shell qui démarre `server.py` dans un processus séparé.
-- `server.py` lance un scanner (`loader.py`) qui parcourt récursivement votre projet pour importer tous les fichiers `.py`.
-- Le décorateur `@user_func` intercepte les fonctions lors de l'import et les enregistre dans un registre global.
-- Le client Java communique avec le serveur Python via le port `50051`.
-- Les données (arguments et valeurs de retour) sont sérialisées en JSON de manière transparente.

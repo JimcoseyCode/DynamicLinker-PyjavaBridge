@@ -61,7 +61,7 @@
                     <protocArtifact>com.google.protobuf:protoc:3.25.1:exe:${os.detected.classifier}</protocArtifact>
                     <pluginId>grpc-java</pluginId>
                     <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.60.0:exe:${os.detected.classifier}</pluginArtifact>
-                    <protoSourceRoot>src/main/proto</protoSourceRoot>
+                    <protoSourceRoot>src/main/java/fr/lirmm/bridge/core/impl/grpc/proto</protoSourceRoot>
                 </configuration>
                 <executions>
                     <execution>
@@ -107,7 +107,7 @@
                         <configuration>
                             <executable>python3</executable>
                             <arguments>
-                                <argument>${project.basedir}/../tools/generate_interface.py</argument>
+                                <argument>${project.basedir}/scripts/generate_interface.py</argument>
                             </arguments>
                         </configuration>
                     </execution>

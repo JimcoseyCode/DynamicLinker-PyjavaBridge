@@ -5,6 +5,7 @@ fr/lirmm/bridge/FunctionCallOrBuilder.class
 fr/lirmm/bridge/BridgeServiceGrpc$BridgeServiceImplBase.class
 fr/lirmm/bridge/BridgeServiceGrpc$1.class
 fr/lirmm/bridge/BridgeServiceGrpc$BridgeServiceBaseDescriptorSupplier.class
+fr/lirmm/bridge/user_api/PythonFunctions.class
 fr/lirmm/bridge/BridgeServiceGrpc.class
 fr/lirmm/bridge/FunctionCall$1.class
 fr/lirmm/bridge/core/PythonBridge.class
@@ -22,11 +23,9 @@ fr/lirmm/bridge/core/PythonConnectorFactory$Prototype.class
 fr/lirmm/bridge/FunctionResult.class
 fr/lirmm/bridge/FunctionResult$1.class
 fr/lirmm/bridge/core/IPythonConnector.class
-fr/lirmm/bridge/core/PythonFunctions.class
 fr/lirmm/bridge/Client.class
 fr/lirmm/bridge/core/impl/grpc/GRPCConnector.class
 fr/lirmm/bridge/BridgeServiceGrpc$BridgeServiceMethodDescriptorSupplier.class
-fr/lirmm/bridge/TestTout.class
 fr/lirmm/bridge/BridgeProto.class
 fr/lirmm/bridge/BridgeServiceGrpc$BridgeServiceFileDescriptorSupplier.class
 fr/lirmm/bridge/FunctionResultOrBuilder.class
