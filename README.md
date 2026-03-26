@@ -1,95 +1,107 @@
 # Stage L3 - Pont Java-Python (fonctions-externes-python)
 
-Ce système implémente plusieurs solutions pour faire appel à des fonctions Python depuis Java de manière transparente à travers différentes technologies : **gRPC**, **GraalVM**, et **Jep**.
+Ce système implémente plusieurs solutions pour faire appel à des fonctions Python depuis Java de manière transparente à travers différentes technologies : **JeP (Java Embedded Python)**, **gRPC**, et **GraalVM**.
 
-L'architecture utilise un système de **Proxy dynamique** en Java, permettant d'appeler des fonctions Python comme s'il s'agissait de méthodes Java natives, avec une génération automatique d'interface regroupant les fonctions user dans une seule interface.
-
-
-## Installation et Configuration
-### 1. Préparation de l'environnement Python
-Le projet utilise un environnement virtuel (`venv`) pour isoler les dépendances gRPC et par la suite les autres technologie .
-
-```bash
-python3 init_env.py
-```
-### 2. Compilation du projet Java
-La compilation Maven gère automatiquement :
-1. La génération du code Java à partir du fichier `.proto`.
-2. Le scan des fichiers Python dans `python_src_dir/` pour générer l'interface `PythonFunctions.java`.
-
-```bash
-cd java/
-mvn clean compile
-```
+L'architecture utilise un système de **Proxy dynamique** en Java, permettant d'appeler des fonctions Python comme s'il s'agissait de méthodes Java natives, avec une génération automatique d'interface regroupant les fonctions utilisateur mais également l interface de pont dynamique offre plusieurs methode pour faire appel a des fonctions python a travers java avec des prototype variée.
 
 ---
 
-## [] -> Guide d'Utilisation (gRPC)
+## Guide d'installation de pyjava_bridge
 
-### 1. Écrire le code Python
-Placez vos fichiers dans le dossier **`python_src_dir`**. Utilisez le décorateur `@user_func` et les *Type Hints* pour une meilleure intégration :
+Le projet est conçu pour être portable (Windows, Mac, Linux) sans aucune configuration manuelle de variables d'environnement.
+
+Un seul script Python s'occupe de tout : création de l'environnement virtuel (`venv`), installation des dépendances (JeP, gRPC), configuration dynamique de Maven, et compilation du projet Java.
+
+```bash
+# À la racine du projet, lancez :
+python3 init_env.py
+```
+
+*C'est tout ! Le script configure automatiquement les chemins vers les bibliothèques C/C++ de JeP (`.jnilib`, `.so`, `.dll`) dans le `pom.xml` pour que Maven fonctionne directement.*
+
+---
+Le script d'initialisation est fondamentale car c'est elle qui apporte la portabilitée en init l'environnement virtuel avec installer des dependances et modification du de la config de maven pour qu'il soit capable de trouver les lib de jep par exemple 
+
+## definition d'une nouvelle fonction utilisateur 
+
+1. Placez vos fichiers Python dans le dossier 
+**`python_src_dir`**.
+2. Utilisez le décorateur `@user_func` et ajoutez des *Type Hints* (indications de type) pour que le traducteur Java comprenne les paramètres c'est pour faciliter lors de l'analyse syntaxique des fonctions python @user_func avec AST pour avoir direct tout les infos pour generer la signature qui sera utiliser pour le proxy entre les deux languages:
 
 ```python
-# Fichier: python_src_dir/mes_calculs.py
+# Fichier: python_src_dir/user_func_file.py
 from bridge_api.decorators import user_func
 
 @user_func
 def multiplier(a: int, b: int) -> int:
-    """Multiplie deux nombres depuis Python."""
     return a * b
 ```
 
-### 2. Lancer le serveur gRPC 
-Le serveur doit être actif pour que Java puisse communiquer avec Python ou sinon le client java a travers le connecteur si cela n'est pas fais il le fera a votre place 
+3. **Recompilez le projet :**
+   ```bash
+   cd java/
+   mvn clean compile
+   ```
+   *Lors de la compilation, le script `generate_interface.py` lit l'Arbre Syntaxique (AST) de votre code Python et génère automatiquement la méthode correspondante dans l'interface Java `PythonFunctions.java`.*
 
-```bash
-# À la racine du projet
-python3 start_persistent_server_grpc.py
-```
-*Le serveur re-génère automatiquement l'interface Java à chaque démarrage si de nouvelles fonctions sont détectées.*
+---
 
-### 3. Utilisation depuis Java
-Le `PythonConnectorFactory` permet de créer un pont vers Python. L'utilisation du Proxy rend l'appel totalement transparent et simple pour l utilisateur final.
+## Utilisation depuis Java 
+
+Le `PythonConnectorFactory` permet de créer un pont vers Python. L'utilisation du Proxy rend l'appel totalement transparent et gère les conversions de types dynamiquement.
 
 ```java
+package fr.lirmm.bridge;
+
 import fr.lirmm.bridge.core.PythonBridge;
 import fr.lirmm.bridge.core.PythonConnectorFactory;
 import fr.lirmm.bridge.user_api.PythonFunctions;
-
-public class Main {
+// Prototype des technologie disponible 
+ public enum Prototype {
+        GRPC, // Serveur grpc implemntée 
+        GRAAL, // pas encore implementée 
+        JEP // implementée 
+}
+public class MonClient {
     public static void main(String[] args) {
-        // Création du pont avec [typePrototype]
-        try (PythonBridge bridge = PythonConnectorFactory.createBridge(PythonConnectorFactory.Prototype.GRPC, null)) {
+        System.out.println("Lancement du Pont...");
+        
+        
+        // Création du pont (Ici avec JeP, le plus rapide et direct il ya juste le prototype a changer l utilisationr este transparente 
+        try (PythonBridge bridge = PythonConnectorFactory.createBridge(Prototype.JEP, null)) {
             
-            // Récupération de l interface proxy 
-            PythonFunctions user_func = bridge.proxyCall(PythonFunctions.class);
-            
-            // Appel transparent de la fonction Python
+            // importaiton de la l interface qui contiens tous nos definitons de @user_func 
+            PythonFunctions api = bridge.proxyCall(PythonFunctions.class);
+            // utilisation transparente 
             int res = api.multiplier(10, 5);
             System.out.println("Résultat de multiplier(10, 5) : " + res);
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+            // 2. Façon dynamique (sans interface générée)
+            Object dynRes = bridge.call("multiplier", 10, 5);
+            System.out.println("Appel dynamique : " + dynRes);
     }
 }
 ```
 
 ---
 
-## Architecture du Projet
+## Execution d'un client java pour tester 
 
-- `bridge_api/` : Contient le décorateur `@user_func` utilisé côté Python.
-- `python_src_dir/` : Répertoire où l'utilisateur dépose ses scripts Python.
-- `java/src/main/java/fr/lirmm/bridge/core/` : Cœur du système (Factory, Connecteurs gRPC/GraalVM).
-- `java/scripts/generate_interface.py` : Script de "compilation" qui traduit les signatures Python en interface Java.
-- `start_persistent_server_grpc.py` : Script de lancement rapide du serveur gRPC.
+L'exécution se fait via `mvn exec:exec` car elle garantit que le processus Java démarre avec le bon environnement (le `PYTHONPATH` pointant sur le `venv`), indispensable pour JeP.
 
-## Tests
-Pour lancer le client de test :
+### Lancer le client JeP spécifique :
 ```bash
 cd java/
-mvn exec:java -Dexec.mainClass="fr.lirmm.bridge.Client"
+mvn exec:exec -Dexec.mainClass="fr.lirmm.bridge.Client"
 ```
+> **Note :** Si vous tentez de lancer `mvn exec:exec` sans spécifier `-Dexec.mainClass`, la commande échouera volontairement. Il faut toujours préciser le fichier à exécuter !
 
+---
 
+## Architecture globale 
+
+- `init_env.py` : L'orchestrateur principal, qui configure l'environnement entier et patch Maven dynamiquement pour eviter les problemes de non portabilitée.
+- `bridge_api/` : Contient le décorateur `@user_func` utilisé côté Python pour exposer des fonctions dans pyjava_bridge.
+- `python_src_dir/` : Répertoire où l'utilisateur definit ses propres fonctions utilisateur .
+- `java/src/main/java/fr/lirmm/bridge/core/` : Le cœur du système (Factory, Proxy, Connecteurs JeP/gRPC).
+- `java/scripts/generate_interface.py` : Script de "compilation AST" qui traduit les signatures Python en interface Java au moment du `mvn compile`.

@@ -7,6 +7,7 @@ package fr.lirmm.bridge.user_api;
  */
 public interface PythonFunctions {
     Object LOL(Object name);
+    Double calculer_integrale(Double a, Double b, Integer n);
     java.util.List<Object> fibonacci(Integer n);
     Integer multiply(Integer a, Integer b);
     Integer puissance(Integer a, Integer b);

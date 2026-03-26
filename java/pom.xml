@@ -42,6 +42,11 @@
             <version>6.0.53</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>black.ninia</groupId>
+            <artifactId>jep</artifactId>
+            <version>4.3.1</version> 
+        </dependency>
     </dependencies>
 
     <build>
@@ -92,10 +97,34 @@
                     </execution>
                 </executions>
             </plugin>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.6.3</version>
+                <configuration>
+                    <executable>java</executable>
+                    <environmentVariables>
+                        <PYTHONPATH>/Users/raphael_raphix/Desktop/LIRMM-PROJECT/l3-2026-fonctions-externes-python/venv/lib/python3.11/site-packages</PYTHONPATH>
+                    </environmentVariables>
+                    <arguments>
+                        <argument>-Djep.library.path=/Users/raphael_raphix/Desktop/LIRMM-PROJECT/l3-2026-fonctions-externes-python/venv/lib/python3.11/site-packages/jep/libjep.jnilib</argument>
+                        <argument>-cp</argument>
+                        <classpath/>
+                        <!-- Utilise la propriété exec.mainClass surchargeable -->
+                        <argument>${exec.mainClass}</argument>
+                    </arguments>
+                </configuration>
                 <executions>
                     <!-- Génération automatique de l'interface Java depuis Python -->
                     <execution>

@@ -1,6 +1,8 @@
 package fr.lirmm.bridge.core;
 
 import fr.lirmm.bridge.core.impl.grpc.GRPCBridge;
+import fr.lirmm.bridge.core.impl.jep.JEPBridge;
+import fr.lirmm.bridge.core.impl.jep.JEPConnector;
 
 /**
  ** Utilitaire pour chosir un pont specifique a une implemntation d'un prototype
@@ -13,9 +15,8 @@ public class PythonConnectorFactory {
     public enum Prototype {
         GRPC, // Serveur grpc
         GRAAL, // GraalVM
-        REP
+        JEP
     }
-
     /**
      * ! Méthode principale pour créer un un pont complet prêt à l'emploi.
      */
@@ -26,9 +27,8 @@ public class PythonConnectorFactory {
             case GRAAL:
                 return null;
 
-            case REP:
-                return null;
-
+            case JEP:
+                return new JEPBridge(new JEPConnector());
             default:
                 throw new IllegalArgumentException("Ce prototype n'est pas supporté : " + type);
         }
@@ -44,8 +44,8 @@ public class PythonConnectorFactory {
                 return Prototype.GRPC;
             case "graal":
                 return Prototype.GRAAL;
-            case "rep":
-                return Prototype.REP;
+            case "jep":
+                return Prototype.JEP;
             default:
                 throw new IllegalArgumentException("Prototype inconnu dans le système : " + type);
         }

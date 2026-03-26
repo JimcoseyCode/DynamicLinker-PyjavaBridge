@@ -8,7 +8,7 @@ public class PythonProxy {
 
     /**
      * Crée une instance d'interface qui délègue ses appels au connecteur
-     * Python[prototype[graal,grpc,rep]].
+     * Python[prototype[graal,grpc,jep]].
      * 
      * @param interfaceClass L'interface Java définissant les signatures des
      *                       fonctions Python qui seron dynamqiuement capter a

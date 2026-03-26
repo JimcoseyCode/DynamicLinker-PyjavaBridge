@@ -11,7 +11,7 @@ public class Client {
         // on demande au factory de nous creer le pont en passant son type ça nous
         // permet de cacher la complexitée la logique metier du systeme impliquée
         try (PythonBridge bridge = PythonConnectorFactory.createBridge(
-                PythonConnectorFactory.Prototype.GRPC,
+                PythonConnectorFactory.Prototype.JEP,
                 null)) {
             // * L'appel de fonction par proxy pour la transparence entre java et python
             // * necessite une compilation pour definir les signature des fonction exposée
@@ -22,7 +22,9 @@ public class Client {
             // user_func
             PythonFunctions userFunc = bridge.proxyCall(PythonFunctions.class);
             // execution transparente
-            System.out.println(" Fibonacci(5) = " + userFunc.fibonacci(5));
+            System.out.println("calculer_integrale(0.0, 3.0) : " + userFunc.calculer_integrale(0.0, 3.0,10));
+
+            System.out.println(" Fibonacci(10) = " + userFunc.fibonacci(10));
             System.out.println(" LOL " + userFunc.LOL("raphael"));
             // utilisation sans proxy non dynmaiquye
             Object res1 = bridge.call("multiply", 10, 5);
