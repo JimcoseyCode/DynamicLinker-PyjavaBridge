@@ -1,21 +1,17 @@
 # Stage L3 - Pont Java-Python (fonctions-externes-python)
 
-Ce système implémente plusieurs solutions pour faire appel à des fonctions Python depuis Java de manière transparente à travers différentes technologies : **gRPC**, **GraalVM**, et **Rep**.
+Ce système implémente plusieurs solutions pour faire appel à des fonctions Python depuis Java de manière transparente à travers différentes technologies : **gRPC**, **GraalVM**, et **Jep**.
 
-L'architecture utilise un système de **Proxy dynamique** en Java, permettant d'appeler des fonctions Python comme s'il s'agissait de méthodes Java natives, avec une génération automatique d'interface.
+L'architecture utilise un système de **Proxy dynamique** en Java, permettant d'appeler des fonctions Python comme s'il s'agissait de méthodes Java natives, avec une génération automatique d'interface regroupant les fonctions user dans une seule interface.
 
 
 ## Installation et Configuration
 ### 1. Préparation de l'environnement Python
-Le projet utilise un environnement virtuel (`venv`) pour isoler les dépendances gRPC.
+Le projet utilise un environnement virtuel (`venv`) pour isoler les dépendances gRPC et par la suite les autres technologie .
 
 ```bash
-# À la racine du projet
-python3 -m venv venv
-source venv/bin/activate  # Sur Windows: venv\Scripts\activate
-pip install -r java/src/main/java/fr/lirmm/bridge/core/impl/grpc/python/requirements.txt
+python3 init_env.py
 ```
-
 ### 2. Compilation du projet Java
 La compilation Maven gère automatiquement :
 1. La génération du code Java à partir du fichier `.proto`.
