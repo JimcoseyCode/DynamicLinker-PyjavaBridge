@@ -2,16 +2,20 @@ package fr.lirmm.bridge;
 
 import fr.lirmm.bridge.core.PythonBridge;
 import fr.lirmm.bridge.core.PythonConnectorFactory;
+import fr.lirmm.bridge.core.PythonConnectorFactory.Prototype;
 import fr.lirmm.bridge.user_api.PythonFunctions;
 
 public class Client {
+     
     public static void main(String[] args) {
+        // * affectation de prototype args -> avec default JEP
+        Prototype t_proto = (args.length > 0) ? PythonConnectorFactory.fromString(args[0]) :PythonConnectorFactory.Prototype.JEP;
         System.out.println("Client java de test des implementations prevu grpc graal rep ");
         // * Init du pont avec en parametre le type du prototype utiliser
         // on demande au factory de nous creer le pont en passant son type ça nous
         // permet de cacher la complexitée la logique metier du systeme impliquée
         try (PythonBridge bridge = PythonConnectorFactory.createBridge(
-                PythonConnectorFactory.Prototype.JEP,
+                t_proto,
                 null)) {
             // * L'appel de fonction par proxy pour la transparence entre java et python
             // * necessite une compilation pour definir les signature des fonction exposée

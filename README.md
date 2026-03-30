@@ -92,9 +92,11 @@ L'exécution se fait via `mvn exec:exec` car elle garantit que le processus Java
 ### Lancer le client JeP spécifique :
 ```bash
 cd java/
-mvn exec:exec -Dexec.mainClass="fr.lirmm.bridge.Client"
+mvn exec:exec -Dexec.mainClass="fr.lirmm.bridge.Client" -Dbridge.mode="prototype"
 ```
-> **Note :** Si vous tentez de lancer `mvn exec:exec` sans spécifier `-Dexec.mainClass`, la commande échouera volontairement. Il faut toujours préciser le fichier à exécuter !
+Lancer votre fichier de test avec le prototype car elle prend en parametre l'affection dynamique pour 
+que le test de plusieurs prototype soit facile au lieu d'aller modifier a chaque fois le fichier et recompilé.
+> **Note :** Si vous tentez de lancer `mvn exec:exec` sans spécifier `-Dexec.mainClass`,  la commande échouera volontairement et `-Dbridge.mode="JEP" ou GRPC OU GRAAL` pour le type de prototype qui fera le pont entre les deux languages . 
 
 ---
 

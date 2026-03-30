@@ -124,6 +124,7 @@
                         <classpath/>
                         <!-- Utilise la propriété exec.mainClass surchargeable -->
                         <argument>${exec.mainClass}</argument>
+                        <argument>${bridge.mode}</argument>
                     </arguments>
                 </configuration>
                 <executions>
