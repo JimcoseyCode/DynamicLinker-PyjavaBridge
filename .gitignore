@@ -1,16 +1,46 @@
-# Java
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+pip-log.txt
+pip-delete-this-directory.txt
+.venv
+.env
+.tox
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.mypy_cache/
+.pytest_cache/
+
+# Java / Maven
+target/
 *.class
 *.jar
 *.war
 *.ear
-hs_err_pid*
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-venv/
-.env
-.vscode
-# OS
+.mtj.tmp/
+*.orig
+*.rej
+*.bak
+.settings/
+.project
+.classpath
+.factorypath
+.idea/
+*.iml
+.vscode/
 .DS_Store
+
+# Bridge generated files (they should be regenerated via scripts)
+config.json
+java/src/main/java/fr/lirmm/pyjava/contract/PythonFunctions.java
+bridge_runtime/bridge_pb2.py
+bridge_runtime/bridge_pb2_grpc.py

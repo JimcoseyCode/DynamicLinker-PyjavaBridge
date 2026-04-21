@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "fr.lirmm.pyjava.grpc";
+option java_outer_classname = "BridgeProto";
+
+service BridgeService {
+  rpc Execute (FunctionRequest) returns (FunctionResult) {}
+}
+
+message FunctionRequest {
+  string function_name = 1;
+  string args_json = 2;
+  string module_name = 3;
+}
+
+message FunctionResult {
+  bool success = 1;
+  string result_json = 2;
+  string error_message = 3;
+}

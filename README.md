@@ -1,109 +1,109 @@
-# Stage L3 - Pont Java-Python (fonctions-externes-python)
+# Stage L3 - Plateforme Modulaire d'Interopérabilité Java-Python (PyJava Bridge)
+***Pyjava_Bridge*** -> **Bridge inter-language d'appel de fonctions extra-java. 
 
-Ce système implémente plusieurs solutions pour faire appel à des fonctions Python depuis Java de manière transparente à travers différentes technologies : **JeP (Java Embedded Python)**, **gRPC**, et **GraalVM**.
+Ce projet implémente une infrastructure professionnelle pour l'invocation de fonctions Python depuis Java. Il se distingue par une architecture multi-modules découplée, permettant d'intégrer le pont comme une véritable bibliothèque logicielle a travers cette modularitée des composants metier les plus essentiel pour etre un plug&play dans le sens ou elle pourra etre importer comme une librairie lambda pour pallier a cette problematique.
 
-L'architecture utilise un système de **Proxy dynamique** en Java, permettant d'appeler des fonctions Python comme s'il s'agissait de méthodes Java natives, avec une génération automatique d'interface regroupant les fonctions utilisateur mais également l interface de pont dynamique offre plusieurs methode pour faire appel a des fonctions python a travers java avec des prototype variée.
+
+
+## Configuration recommandé
+
+Pour garantir une stabilité et une performance optimales, les versions suivantes sont privilégiées :
+
+*   **JDK** : **GraalVM pour JDK 21** (ou supérieur). C'est indispensable pour le mode `graalvm` et cela garantit la compatibilité avec les interfaces compilées.
+*   **Python** : **Python 3.10** ou **3.11**. Ces versions offrent le meilleur compromis de compatibilité entre JEP (accès CPython) et GraalPy (environnement polyglotte).
+*   **Maven** : Version **3.8** ou supérieure.
 
 ---
 
-## Guide d'installation de pyjava_bridge
 
-Le projet est conçu pour être portable (Windows, Mac, Linux) sans aucune configuration manuelle de variables d'environnement.
+---
+## Guide d'installation de pyjava_bridge: bridge.py
+Le projet est conçu pour être portable (Windows, Mac, Linux) sans aucune configuration manuelle de variables d'environnement.Centralisation des fonctions utilitaire dans `bridge.py` dans lequel elle prend des args pour specifier quel script lancer.
+L'ensemble du cycle de vie de pyjava_bridge est piloté par un point d'entrée unique à la racine : `bridge.py`.
 
-Un seul script Python s'occupe de tout : création de l'environnement virtuel (`venv`), installation des dépendances (JeP, gRPC), configuration dynamique de Maven, et compilation du projet Java.
-
+### Installation et Configuration
 ```bash
-# À la racine du projet, lancez :
-python3 init_env.py
+python3 bridge.py setup
 ```
+Crée l'environnement virtuel, installe les dépendances Python, détecte le JDK (priorité GraalVM) pour sa rapiditée pour passer un stress-code c'est a dire l'execution de fonction des millions de fois. Ce script installe les bibliothèques Java dans votre dépôt Maven local.
 
-*C'est tout ! Le script configure automatiquement les chemins vers les bibliothèques C/C++ de JeP (`.jnilib`, `.so`, `.dll`) dans le `pom.xml` pour que Maven fonctionne directement.*
-
----
-Le script d'initialisation est fondamentale car c'est elle qui apporte la portabilitée en init l'environnement virtuel avec installer des dependances et modification du de la config de maven pour qu'il soit capable de trouver les lib de jep par exemple 
+## CONFIG.JSON
+Un fichier de configuration sera generée lors du setup de pyjava_bridge avec des informations de base dans lequel le working directory poura etre modifiée et le bridge_mode = {**JEP**,**GRAALVM**,**gRPC**} a tout moment cela simplifie le cycle de developpement qui ne serons que implementer ses user_func et lancer python3 bridge.py compile et les fonctions serons reconnu directement dans java.
+### Synchronisation & compilation 
+```bash
+python3 bridge.py compile
+```
+Analyse vos scripts Python dans `working_directory/` et génère une interface Java dédiée pour chaque fichier. Cette commande assure une synchronisation incrémentale ultra-rapide car elle ne necessite pas une compilation complete juste le necessaire notamment nos les fonctions utilisateur nouvellement implementée en python avec le decorateur @user_func.
 
 ## definition d'une nouvelle fonction utilisateur 
 
 1. Placez vos fichiers Python dans le dossier 
-**`python_src_dir`**.
-2. Utilisez le décorateur `@user_func` et ajoutez des *Type Hints* (indications de type) pour que le traducteur Java comprenne les paramètres c'est pour faciliter lors de l'analyse syntaxique des fonctions python @user_func avec AST pour avoir direct tout les infos pour generer la signature qui sera utiliser pour le proxy entre les deux languages:
+**`working_dir`**. ou celui que vous aurez defini dans le config.json 
+2. Utilisez le décorateur `@user_func` et ajoutez des *Type Hints* (indications de type) pour que le traducteur Java comprenne les paramètres c'est pour faciliter lors de l'analyse syntaxique des fonctions python @user_func avec AST pour avoir direct tout les infos pour generer la signature qui sera utiliser pour le proxy ou faciliter la generation des fichier java pour chaque fichier qui ce trovuera dans l'aborescence du **`working_dir`** :
 
 ```python
 # Fichier: python_src_dir/user_func_file.py
-from bridge_api.decorators import user_func
+from pyjava import user_func
 
 @user_func
 def multiplier(a: int, b: int) -> int:
     return a * b
 ```
 
-3. **Recompilez le projet :**
+3. **generation du contract :**
    ```bash
-   cd java/
-   mvn clean compile
+   
+   python3 bridge.py compile
    ```
-   *Lors de la compilation, le script `generate_interface.py` lit l'Arbre Syntaxique (AST) de votre code Python et génère automatiquement la méthode correspondante dans l'interface Java `PythonFunctions.java`.*
+   *Lors de la compilation, le script `automation/contract.py` lit l'Arbre Syntaxique (AST) de chaque fichier python trouvée dans l'aborescence du `working _dir` pour chaque fichier python son fichier java et generer avec les memes nom de fonction en java `user_func_file.java` dans le dossier **`target/generated-sources/pyjava/fr/lirmm/pyjava/contract`**.*
 
 ---
-
-## Utilisation depuis Java 
-
-Le `PythonConnectorFactory` permet de créer un pont vers Python. L'utilisation du Proxy rend l'appel totalement transparent et gère les conversions de types dynamiquement.
-
 ```java
-package fr.lirmm.bridge;
+package fr.lirmm.pyjava;
+import fr.lirmm.pyjava.api.PyJavaBridge;
+public class Main {
+    public static void main(String[] args) throws Exception {
+        try (PyJavaBridge bridge = PyJava.load()) {
+            Object resInvoke_soustraire = bridge.invoke("working_directory.calculs", "soustraire", 20L, 8L);
+            System.out.println("Soustraction : 20 - 8 = " + resInvoke_soustraire); -> 12 
 
-import fr.lirmm.bridge.core.PythonBridge;
-import fr.lirmm.bridge.core.PythonConnectorFactory;
-import fr.lirmm.bridge.user_api.PythonFunctions;
-// Prototype des technologie disponible 
- public enum Prototype {
-        GRPC, // Serveur grpc implemntée 
-        GRAAL, // pas encore implementée 
-        JEP // implementée 
-}
-public class MonClient {
-    public static void main(String[] args) {
-        System.out.println("Lancement du Pont...");
-        
-        
-        // Création du pont (Ici avec JeP, le plus rapide et direct il ya juste le prototype a changer l utilisationr este transparente 
-        try (PythonBridge bridge = PythonConnectorFactory.createBridge(Prototype.JEP, null)) {
-            
-            // importaiton de la l interface qui contiens tous nos definitons de @user_func 
-            PythonFunctions api = bridge.proxyCall(PythonFunctions.class);
-            // utilisation transparente 
-            int res = api.multiplier(10, 5);
-            System.out.println("Résultat de multiplier(10, 5) : " + res);
-
-            // 2. Façon dynamique (sans interface générée)
-            Object dynRes = bridge.call("multiplier", 10, 5);
-            System.out.println("Appel dynamique : " + dynRes);
+        } catch (Exception e) {
+            System.err.println("erreur pyajva_bridge");
+            e.printStackTrace();
+        }
     }
 }
 ```
 
----
-
-## Execution d'un client java pour tester 
-
-L'exécution se fait via `mvn exec:exec` car elle garantit que le processus Java démarre avec le bon environnement (le `PYTHONPATH` pointant sur le `venv`), indispensable pour JeP.
-
-### Lancer le client JeP spécifique :
+### Test du systeme 
 ```bash
-cd java/
-mvn exec:exec -Dexec.mainClass="fr.lirmm.bridge.Client" -Dbridge.mode="prototype"
+python3 bridge.py test
 ```
-Lancer votre fichier de test avec le prototype car elle prend en parametre l'affection dynamique pour 
-que le test de plusieurs prototype soit facile au lieu d'aller modifier a chaque fois le fichier et recompilé.
-> **Note :** Si vous tentez de lancer `mvn exec:exec` sans spécifier `-Dexec.mainClass`,  la commande échouera volontairement et `-Dbridge.mode="JEP" ou GRPC OU GRAAL` pour le type de prototype qui fera le pont entre les deux languages . 
+Lance l'application principale pour valider les appels multi-modules avec execution avec un invoker a la integraal et une avec Dynamic-Linker qui automatise de maniere tres elegante l'execution de fonction python depuis java pour plus tard si une automatisation complete devrai etre privilegiée ce module s'en chargera dynamiquement.
 
----
+## `Fonctionnalités Clés `
 
-## Architecture globale 
+### Liaison Dynamique (pyFunc) avec Dynamic-Linker  
+Le moteur exploite les métadonnées pour lier automatiquement une interface Java à son implémentation Python sans configuration manuelle.
+plus tard le but sera d'initialiser que le dynamic linker et plus besoin de specifier le path du fichier .class cible pour faire un reflect a la volée.
+```java
+Calculs calc = bridge.pyFunc(Calculs.class);
+Long res = calc.additionner(10L, 20L);
+```
 
-- `init_env.py` : L'orchestrateur principal, qui configure l'environnement entier et patch Maven dynamiquement pour eviter les problemes de non portabilitée.
-- `bridge_api/` : Contient le décorateur `@user_func` utilisé côté Python pour exposer des fonctions dans pyjava_bridge.
-- `python_src_dir/` : Répertoire où l'utilisateur definit ses propres fonctions utilisateur .
-- `java/src/main/java/fr/lirmm/bridge/core/` : Le cœur du système (Factory, Proxy, Connecteurs JeP/gRPC).
-- `java/scripts/generate_interface.py` : Script de "compilation AST" qui traduit les signatures Python en interface Java au moment du `mvn compile`.
+### Chargement des @user_func de maniere differée :-> chargment que a l'éxecution
+Les modules Python ne sont chargés en mémoire qu'au moment de leur premier appel réel, garantissant un démarrage instantané du système car chargée tout les user_func d'un coup au demarage du bridge etait lourd alors que il faudrais juste utiliser que la fonctions qu'on veut executée qui a été passée en parametre au bridge. 
+
+### Génération Multi-Interfaces 
+Chaque fichier `.py` devient une interface `.java` distincte, permettant une organisation propre et évitant les collisions de noms dans les grands projets.
+
+
+## Architecture du Projet
+
+Le projet est divisé en composants indépendants :
+cela garanti une modularitée acru et un deboguage assez localisée. 
+
+1.  **pyjava-dynamic-linker** : Bibliothèque Java autonome gérant la réflexion et la création de Proxys dynamiques via le contrat `PythonInvoker`.
+2.  **pyjava-bridge-core** : Cœur du système contenant les connecteurs (JEP, gRPC, GraalVM), la logique de chargement differée et les définitions Protobuf pour le connecteur gRPC.
+3.  **App (Projet principal)** : Votre code métier Java situé dans `java/` qui utilise le bridge comme une dépendance standard.
+4.  **automation/** : Scripts techniques regroupés pour le setup et la génération automatique de contrats pour faire le link entre java et python.
