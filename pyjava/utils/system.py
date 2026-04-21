@@ -13,31 +13,49 @@ def check_os():
     return sys.platform
 
 # ? [INFO] -> Tente de détecter automatiquement JAVA_HOME avec un ordre priorité pour GraalVM ainsi de suite 
-def detect_java_home(curr_os = check_os()):
+def detect_java_home():
     curr_os = check_os()
     list_java_installed = []
-    # ? Extraction en fonction de l'os les version de java installée
+    
+    # 1. On liste les installations potentielles
     match curr_os:
         case "darwin":
             out_res = subprocess.run(["/usr/libexec/java_home", "-V"], capture_output=True, text=True)
             list_java_installed = list(set(re.findall(r'(/Library/Java/JavaVirtualMachines/.*/Contents/Home)', out_res.stdout + out_res.stderr)))
         case "linux":
             path = Path("/usr/lib/jvm")
-            list_java_installed = [str(d) for d in path.iterdir() if d.is_dir()] if path.exists() else []
+            if path.exists():
+                # On ne garde que les dossiers qui contiennent bin/java
+                list_java_installed = [str(d) for d in path.iterdir() if d.is_dir() and (d / "bin" / "java").exists()]
         case "win32" | "nt":
             path = Path(os.environ.get("ProgramFiles", "C:\\Program Files")) / "Java"
-            list_java_installed = [str(d) for d in path.iterdir() if d.is_dir()] if path.exists() else []
+            if path.exists():
+                list_java_installed = [str(d) for d in path.iterdir() if d.is_dir() and (d / "bin" / "java.exe").exists()]
 
-    # ! [choise] -> par prioritée 
+    # 2. On applique la priorité
+    # Priorité 1 : GraalVM (déjà vérifié pour l'existence du binaire)
     graal = next((h for h in list_java_installed if "graalvm" in h.lower()), None)
     if graal: 
         return graal
-    # Utilisation du Java_home par default si graalvm n'est pas installée
+        
+    # Priorité 2 : JAVA_HOME actuel s'il est valide
     env_home = os.environ.get("JAVA_HOME")
-    if env_home and Path(env_home).exists(): 
-        return env_home
+    if env_home:
+        java_exe = "java.exe" if curr_os in ["win32", "nt"] else "java"
+        if (Path(env_home) / "bin" / java_exe).exists():
+            return env_home
+            
+    # Priorité 3 : Première installation valide trouvée
     if list_java_installed: 
         return list_java_installed[0]
+        
+    # Dernier recours : si on est sur Mac, demander au système le home par défaut
+    if curr_os == "darwin":
+        try:
+            res = subprocess.run(["/usr/libexec/java_home"], capture_output=True, text=True)
+            if res.returncode == 0: return res.stdout.strip()
+        except: pass
+        
     return "None"
 
 # ? [INFO] -> recupere java avec un ordre de prioritée sur graalvm pour la performance 

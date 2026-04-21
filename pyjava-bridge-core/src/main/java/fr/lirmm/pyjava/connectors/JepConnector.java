@@ -113,7 +113,7 @@ public class JepConnector implements IPythonConnector {
 
     @Override
     public void close() {
-        if (interp != null) {
+        if (pythonEngine != null) {
             pythonEngine.close();
             System.out.println("[JeP] Interpréteur fermé.");
         }
